@@ -14,8 +14,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let topic = 'general';
+
   try {
-    const { topic, limit } = await request.json();
+    const { topic: requestTopic, limit } = await request.json();
+    topic = requestTopic;
     const topicInfo = NEWS_TOPICS.find(t => t.id === topic);
 
     if (!topicInfo) {
