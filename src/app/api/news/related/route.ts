@@ -12,8 +12,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let title = '';
+
   try {
-    const { title, limit } = await request.json();
+    const { title: requestTitle, limit } = await request.json();
+    title = requestTitle;
 
     const keywords = title
       .toLowerCase()
