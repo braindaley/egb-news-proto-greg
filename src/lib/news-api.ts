@@ -33,7 +33,7 @@ export class NewsAPIService {
             remaining: response.quota.remaining,
             isUsingMockData: response.quota.isUsingMockData,
             lastUpdated: new Date().toISOString(),
-            error: (response.quota as any).error
+            error: (response.quota as { error?: string }).error
           }
         });
         window.dispatchEvent(quotaEvent);

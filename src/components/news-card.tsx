@@ -1,7 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { NewsArticle } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';

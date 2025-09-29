@@ -46,8 +46,6 @@ export async function POST(request: NextRequest) {
       keywords = firstWord || 'news';
     }
 
-    console.log('Related articles search - Title:', title);
-    console.log('Related articles search - Keywords:', keywords);
 
     const params = new URLSearchParams({
       'source-countries': 'us',
@@ -74,10 +72,9 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('Related articles API response:', data.news ? data.news.length : 0, 'articles');
     return NextResponse.json(data);
 
-  } catch (error) {
+  } catch {
     // Fallback to mock data
     const mockArticles = getMockRelatedArticles(title, 'current-article');
     return NextResponse.json({ news: mockArticles });

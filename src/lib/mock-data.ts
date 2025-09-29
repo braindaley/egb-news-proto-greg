@@ -81,7 +81,7 @@ export const mockNewsArticles: NewsArticle[] = [
   }
 ];
 
-export function getMockArticlesByTopic(topic: string): NewsArticle[] {
+export function getMockArticlesByTopic(): NewsArticle[] {
   // Return all mock articles for now, but you could filter by topic
   return mockNewsArticles;
 }

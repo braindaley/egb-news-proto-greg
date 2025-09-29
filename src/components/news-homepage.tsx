@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { QuotaDisplay } from '@/components/quota-display';
 import { decodeHtmlEntities } from '@/lib/html-utils';
+import Image from 'next/image';
 import { Newspaper, Loader2 } from 'lucide-react';
 
 export default function NewsHomepage() {
@@ -36,13 +37,10 @@ export default function NewsHomepage() {
 
   const fetchRelatedArticles = useCallback(async (title: string, currentArticleId: string) => {
     setLoadingRelated(true);
-    console.log('Fetching related articles for:', title);
     try {
       const related = await newsAPI.getRelatedArticles(title, 6); // Get more to filter out current
-      console.log('Raw related articles found:', related.length);
       // Filter out the current article
       const filtered = related.filter(article => article.id !== currentArticleId).slice(0, 4);
-      console.log('Filtered related articles:', filtered.length);
       setRelatedArticles(filtered);
     } catch (error) {
       console.error('Error fetching related articles:', error);
@@ -145,10 +143,13 @@ export default function NewsHomepage() {
                 <div className="space-y-6">
                   {selectedArticle.image && (
                     <div className="w-full rounded-lg overflow-hidden">
-                      <img
+                      <Image
                         src={selectedArticle.image}
                         alt={selectedArticle.title}
+                        width={800}
+                        height={400}
                         className="w-full h-auto object-cover"
+                        unoptimized
                       />
                     </div>
                   )}

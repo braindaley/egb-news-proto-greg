@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { NEWS_TOPICS } from '@/lib/constants';
-import { NewsTopic } from '@/lib/types';
 import { getMockArticlesByTopic } from '@/lib/mock-data';
 
 const API_BASE_URL = 'https://api.worldnewsapi.com';
@@ -17,7 +16,7 @@ export async function POST(request: NextRequest) {
   let topic = 'general';
 
   try {
-    const { topic: requestTopic, limit } = await request.json();
+    const { topic: requestTopic } = await request.json();
     topic = requestTopic;
     const topicInfo = NEWS_TOPICS.find(t => t.id === topic);
 
@@ -56,7 +55,7 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       // If quota exhausted or other API error, return mock data
-      const mockArticles = getMockArticlesByTopic(topic);
+      const mockArticles = getMockArticlesByTopic();
       return NextResponse.json({
         news: mockArticles,
         quota: { remaining: 0, isUsingMockData: true }
@@ -74,9 +73,9 @@ export async function POST(request: NextRequest) {
       }
     });
 
-  } catch (error) {
+  } catch {
     // Fallback to mock data on any error
-    const mockArticles = getMockArticlesByTopic(topic);
+    const mockArticles = getMockArticlesByTopic();
     return NextResponse.json({
       news: mockArticles,
       quota: { remaining: 0, isUsingMockData: true }
