@@ -18,13 +18,36 @@ export async function POST(request: NextRequest) {
     const { title: requestTitle, limit } = await request.json();
     title = requestTitle;
 
-    const keywords = title
+    // Extract meaningful keywords from title
+    const stopWords = ['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'her', 'was', 'one', 'our', 'had', 'have', 'what', 'were', 'said', 'each', 'which', 'their', 'time', 'will', 'about', 'would', 'there', 'could', 'other', 'after', 'first', 'well', 'many', 'some', 'very', 'when', 'much', 'new', 'also', 'may', 'way', 'most', 'more'];
+
+    let keywords = title
       .toLowerCase()
       .replace(/[^\w\s]/g, '')
       .split(' ')
-      .filter((word: string) => word.length > 3)
-      .slice(0, 3)
+      .filter((word: string) => word.length > 3 && !stopWords.includes(word))
+      .slice(0, 4) // Take up to 4 words
       .join(',');
+
+    // If no good keywords found, try with shorter words
+    if (!keywords) {
+      keywords = title
+        .toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .split(' ')
+        .filter((word: string) => word.length > 2 && !stopWords.includes(word))
+        .slice(0, 3)
+        .join(',');
+    }
+
+    // Fallback to first meaningful word
+    if (!keywords) {
+      const firstWord = title.toLowerCase().replace(/[^\w\s]/g, '').split(' ')[0];
+      keywords = firstWord || 'news';
+    }
+
+    console.log('Related articles search - Title:', title);
+    console.log('Related articles search - Keywords:', keywords);
 
     const params = new URLSearchParams({
       'source-countries': 'us',
@@ -51,6 +74,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
+    console.log('Related articles API response:', data.news ? data.news.length : 0, 'articles');
     return NextResponse.json(data);
 
   } catch (error) {

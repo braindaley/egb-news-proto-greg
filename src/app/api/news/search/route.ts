@@ -35,8 +35,13 @@ export async function POST(request: NextRequest) {
       'number': '10'
     };
 
-    if (topic !== 'general') {
-      baseParams['text'] = topicInfo.keywords;
+    if (topic === 'general') {
+      // For general feed, use broad political keywords (under 100 chars)
+      baseParams['text'] = 'politics,government,congress,policy,federal,law,legislation,election';
+    } else {
+      // For specific topic, use that topic's keywords (ensure under 100 chars)
+      const keywords = topicInfo.keywords.substring(0, 90); // Keep some buffer
+      baseParams['text'] = keywords;
     }
 
     const urlWithParams = `${API_BASE_URL}/search-news?${new URLSearchParams(baseParams).toString()}`;
@@ -52,15 +57,29 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       // If quota exhausted or other API error, return mock data
       const mockArticles = getMockArticlesByTopic(topic);
-      return NextResponse.json({ news: mockArticles });
+      return NextResponse.json({
+        news: mockArticles,
+        quota: { remaining: 0, isUsingMockData: true }
+      });
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    const quotaLeft = response.headers.get('X-API-QUOTA-LEFT');
+
+    return NextResponse.json({
+      ...data,
+      quota: {
+        remaining: quotaLeft ? parseInt(quotaLeft) : null,
+        isUsingMockData: false
+      }
+    });
 
   } catch (error) {
     // Fallback to mock data on any error
     const mockArticles = getMockArticlesByTopic(topic);
-    return NextResponse.json({ news: mockArticles });
+    return NextResponse.json({
+      news: mockArticles,
+      quota: { remaining: 0, isUsingMockData: true }
+    });
   }
 }

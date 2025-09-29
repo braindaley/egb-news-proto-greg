@@ -6,8 +6,10 @@ import { newsAPI } from '@/lib/news-api';
 import { TopicNavigation } from '@/components/topic-navigation';
 import { MobileNavigation } from '@/components/mobile-navigation';
 import { NewsCard } from '@/components/news-card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { QuotaDisplay } from '@/components/quota-display';
+import { decodeHtmlEntities } from '@/lib/html-utils';
 import { Newspaper, Loader2 } from 'lucide-react';
 
 export default function NewsHomepage() {
@@ -34,10 +36,13 @@ export default function NewsHomepage() {
 
   const fetchRelatedArticles = useCallback(async (title: string, currentArticleId: string) => {
     setLoadingRelated(true);
+    console.log('Fetching related articles for:', title);
     try {
       const related = await newsAPI.getRelatedArticles(title, 6); // Get more to filter out current
+      console.log('Raw related articles found:', related.length);
       // Filter out the current article
       const filtered = related.filter(article => article.id !== currentArticleId).slice(0, 4);
+      console.log('Filtered related articles:', filtered.length);
       setRelatedArticles(filtered);
     } catch (error) {
       console.error('Error fetching related articles:', error);
@@ -130,8 +135,11 @@ export default function NewsHomepage() {
             <>
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold leading-tight pr-8">
-                  {selectedArticle.title}
+                  {decodeHtmlEntities(selectedArticle.title)}
                 </DialogTitle>
+                <DialogDescription className="sr-only">
+                  Full article view with content and related articles
+                </DialogDescription>
               </DialogHeader>
               <ScrollArea className="max-h-[calc(90vh-8rem)]">
                 <div className="space-y-6">
@@ -148,12 +156,12 @@ export default function NewsHomepage() {
                   <div className="prose prose-sm max-w-none dark:prose-invert">
                     {selectedArticle.summary && (
                       <p className="text-lg font-medium text-muted-foreground leading-relaxed">
-                        {selectedArticle.summary}
+                        {decodeHtmlEntities(selectedArticle.summary)}
                       </p>
                     )}
                     {selectedArticle.text && (
                       <div className="mt-4 whitespace-pre-wrap leading-relaxed">
-                        {selectedArticle.text}
+                        {decodeHtmlEntities(selectedArticle.text)}
                       </div>
                     )}
                   </div>
@@ -204,6 +212,9 @@ export default function NewsHomepage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Quota Display */}
+      <QuotaDisplay />
     </div>
   );
 }

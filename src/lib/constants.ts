@@ -3,8 +3,8 @@ import { TopicInfo } from './types';
 export const NEWS_TOPICS: TopicInfo[] = [
   {
     id: 'general',
-    label: 'General News',
-    keywords: 'politics,breaking news,current events'
+    label: 'All Topics',
+    keywords: 'politics,policy,government,congress,federal'
   },
   {
     id: 'abortion',

@@ -25,6 +25,20 @@ export class NewsAPIService {
 
     try {
       const response = await this.makeRequest('/search', params);
+
+      // Emit quota update event if we have quota info
+      if (response.quota && typeof window !== 'undefined') {
+        const quotaEvent = new CustomEvent('quotaUpdate', {
+          detail: {
+            remaining: response.quota.remaining,
+            isUsingMockData: response.quota.isUsingMockData,
+            lastUpdated: new Date().toISOString(),
+            error: (response.quota as any).error
+          }
+        });
+        window.dispatchEvent(quotaEvent);
+      }
+
       return response.news || [];
     } catch (error) {
       console.error(`Error fetching news for topic ${topic}:`, error);

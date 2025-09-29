@@ -19,6 +19,11 @@ export interface NewsResponse {
   available: number;
   number: number;
   offset: number;
+  quota?: {
+    remaining: number;
+    isUsingMockData: boolean;
+    error?: string;
+  };
 }
 
 export type NewsTopic =

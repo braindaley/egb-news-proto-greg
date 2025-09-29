@@ -7,6 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
 import { Clock, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { decodeHtmlEntities } from '@/lib/html-utils';
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -94,7 +95,7 @@ export function NewsCard({ article, onClick, className, compact = false }: NewsC
             <div className="flex-1 min-w-0">
               <div className="mb-2">
                 <h3 className="font-semibold text-sm leading-tight line-clamp-2 mb-1">
-                  {article.title}
+                  {decodeHtmlEntities(article.title)}
                 </h3>
                 {article.authors && article.authors.length > 0 && (
                   <p className="text-muted-foreground text-xs">
@@ -150,7 +151,7 @@ export function NewsCard({ article, onClick, className, compact = false }: NewsC
         <div className="space-y-3">
           <div>
             <h2 className="font-bold text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors mb-1">
-              {article.title}
+              {decodeHtmlEntities(article.title)}
             </h2>
             {article.authors && article.authors.length > 0 && (
               <p className="text-muted-foreground text-sm">
@@ -161,7 +162,7 @@ export function NewsCard({ article, onClick, className, compact = false }: NewsC
 
           {article.summary && (
             <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
-              {article.summary}
+              {decodeHtmlEntities(article.summary)}
             </p>
           )}
 
